@@ -96,6 +96,7 @@ function bindAutoPrompt() {
 function setInstallUIState() {
   const ready = !!deferredInstallPrompt;
   if (installNowBtn) installNowBtn.disabled = !ready;
+  if (modalInstallBtn) modalInstallBtn.disabled = !ready;
   if (installBar) installBar.hidden = !(isAndroidChrome() && !isStandalone());
   if (!ready && iosTip) {
     iosTip.classList.add("show");

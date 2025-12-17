@@ -1,8 +1,8 @@
 {
   "name": "NW App 2026",
   "short_name": "NW App",
-  "start_url": "/nw-app-2026/",
-  "scope": "/nw-app-2026/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#c62828",
