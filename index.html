@@ -19,15 +19,22 @@
     .desc { font-size: 16px; opacity: .9; margin: 0 0 20px }
     .row { display: flex; gap: 12px; flex-wrap: wrap }
     button { appearance: none; border: 0; border-radius: 10px; padding: 12px 16px; font-size: 16px; font-weight: 600; cursor: pointer; background: #fff; color: #c62828 }
-    button:disabled { opacity: .6; cursor: not-allowed }
     button[hidden] { display: none }
     .ios-tip { display: none; margin-top: 16px; font-size: 15px; background: rgba(255,255,255,.12); padding: 12px; border-radius: 10px }
     .ios-tip.show { display: block }
     .tiny { font-size: 13px; opacity: .85 }
     input { width: 100%; padding: 12px 14px; border-radius: 10px; border: none; margin: 8px 0; font-size: 16px }
     form .row { justify-content: flex-start }
-    .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; background: rgba(255,255,255,.15); backdrop-filter: blur(6px) }
+    .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; background: linear-gradient(90deg,#ff5252,#c62828); color: #fff; box-shadow: 0 -6px 20px rgba(0,0,0,.35); z-index: 50 }
+    .bar span { font-weight: 700; font-size: 15px }
+    .bar button { background: #fff; color: #c62828; padding: 12px 18px; border-radius: 12px }
     .bar[hidden] { display: none }
+    .modal { position: fixed; inset: 0; z-index: 100 }
+    .modal[hidden] { display: none }
+    .modal .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55) }
+    .modal .content { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(440px,92vw); background: #fff; color: #c62828; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.45); padding: 18px }
+    .modal .content h3 { margin: 0 0 8px; font-size: 20px }
+    .modal .content p { margin: 0 0 14px; color: #b71c1c }
   </style>
 </head>
 <body>
@@ -55,8 +62,19 @@
       <p class="tiny">Android 請使用 Chrome，iOS 請使用 Safari。</p>
     </div>
     <div id="installBar" class="bar" hidden>
-      <span class="tiny">安裝至桌面以獨立使用</span>
+      <span>安裝至桌面以獨立使用</span>
       <button id="installNowBtn">立即安裝</button>
+    </div>
+    <div id="installModal" class="modal" hidden>
+      <div class="backdrop"></div>
+      <div class="content">
+        <h3>安裝至桌面</h3>
+        <p id="installModalMsg">為了獨立模式與最佳體驗，請安裝此應用。</p>
+        <div class="row">
+          <button id="modalInstallBtn">立即安裝</button>
+          <button id="modalCloseBtn">稍後</button>
+        </div>
+      </div>
     </div>
   </div>
   <script>

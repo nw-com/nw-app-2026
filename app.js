@@ -11,6 +11,10 @@ const appSection = document.getElementById("appSection");
 const signOutBtn = document.getElementById("signOutBtn");
 const installBar = document.getElementById("installBar");
 const installNowBtn = document.getElementById("installNowBtn");
+const installModal = document.getElementById("installModal");
+const modalInstallBtn = document.getElementById("modalInstallBtn");
+const modalCloseBtn = document.getElementById("modalCloseBtn");
+const installModalMsg = document.getElementById("installModalMsg");
 function getBasePath() {
   return location.hostname.endsWith("github.io") ? "/nw-app-2026/" : "./";
 }
@@ -42,26 +46,35 @@ window.addEventListener("beforeinstallprompt", e => {
     installBar.hidden = false;
   }
 });
-installBtn.addEventListener("click", async () => {
-  if (deferredInstallPrompt) {
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    installBtn.hidden = true;
-    installBar.hidden = true;
+function openInstallModal() {
+  if (!installModal) return;
+  if (isiOS()) {
+    installModalMsg.textContent = "在 Safari 點擊分享圖示，選擇「加入主畫面」以建立捷徑。";
   } else if (isAndroidChrome()) {
-    iosTip.classList.add("show");
-    iosTip.textContent = "在 Chrome 點擊右上角「⋮」，選擇「安裝應用程式」以建立捷徑。";
+    installModalMsg.textContent = deferredInstallPrompt ? "點選下方「立即安裝」呼叫安裝提示。" : "在 Chrome 點擊右上角「⋮」，選擇「安裝應用程式」。";
+  } else {
+    installModalMsg.textContent = "使用支援 PWA 的瀏覽器以安裝至主畫面。";
   }
-});
+  installModal.hidden = false;
+}
+installBtn.addEventListener("click", () => openInstallModal());
 if (installNowBtn) {
-  installNowBtn.addEventListener("click", async () => {
+  installNowBtn.addEventListener("click", () => openInstallModal());
+}
+if (modalCloseBtn && installModal) {
+  modalCloseBtn.addEventListener("click", () => { installModal.hidden = true; });
+}
+if (modalInstallBtn) {
+  modalInstallBtn.addEventListener("click", async () => {
     if (deferredInstallPrompt) {
-      deferredInstallPrompt.prompt();
+      await deferredInstallPrompt.prompt();
       await deferredInstallPrompt.userChoice;
       deferredInstallPrompt = null;
       installBtn.hidden = true;
       installBar.hidden = true;
+      installModal.hidden = true;
+    } else {
+      openInstallModal();
     }
   });
 }
@@ -131,9 +144,11 @@ document.addEventListener("DOMContentLoaded", () => {
     installBtn.hidden = false;
     setInstallUIState();
     bindAutoPrompt();
+    openInstallModal();
   }
 });
 window.addEventListener("appinstalled", () => {
   if (installBar) installBar.hidden = true;
   if (installBtn) installBtn.hidden = true;
+  if (installModal) installModal.hidden = true;
 });
