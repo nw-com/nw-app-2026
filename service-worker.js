@@ -7,6 +7,7 @@ const ASSETS = [
 ];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
+  self.skipWaiting();
 });
 self.addEventListener("activate", e => {
   e.waitUntil(
@@ -14,6 +15,7 @@ self.addEventListener("activate", e => {
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
     )
   );
+  self.clients.claim();
 });
 self.addEventListener("fetch", e => {
   const req = e.request;
@@ -29,4 +31,3 @@ self.addEventListener("fetch", e => {
     )
   );
 });
-

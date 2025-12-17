@@ -7,6 +7,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="NW App 2026">
+  <link rel="apple-touch-icon" sizes="192x192" href="https://via.placeholder.com/192.png">
+  <link rel="apple-touch-icon" sizes="512x512" href="https://via.placeholder.com/512.png">
   <link rel="manifest" href="manifest.webmanifest">
   <title>NW App 2026</title>
   <style>
@@ -21,18 +23,34 @@
     .ios-tip { display: none; margin-top: 16px; font-size: 15px; background: rgba(255,255,255,.12); padding: 12px; border-radius: 10px }
     .ios-tip.show { display: block }
     .tiny { font-size: 13px; opacity: .85 }
+    input { width: 100%; padding: 12px 14px; border-radius: 10px; border: none; margin: 8px 0; font-size: 16px }
+    form .row { justify-content: flex-start }
   </style>
 </head>
 <body>
   <div class="card">
     <h1 class="title">雲端低成本APP系統</h1>
     <p class="desc">使用 Firebase 與 GitHub Pages，支援 PWA 安裝至桌面捷徑。</p>
-    <div class="row">
-      <button id="installBtn" hidden>安裝至桌面</button>
-      <button id="openBtn">開啟應用</button>
+    <div id="loginCard">
+      <h2 class="title" style="font-size:20px">登入</h2>
+      <form id="loginForm">
+        <input id="email" type="email" placeholder="電子郵件" value="nwapp.eason@gmail.com" required>
+        <input id="password" type="password" placeholder="密碼" required>
+        <div class="row">
+          <button type="submit">登入</button>
+        </div>
+        <p id="loginMsg" class="tiny"></p>
+      </form>
     </div>
-    <div id="iosTip" class="ios-tip"></div>
-    <p class="tiny">Android 請使用 Chrome，iOS 請使用 Safari。</p>
+    <div id="appSection" hidden>
+      <div class="row">
+        <button id="installBtn" hidden>安裝至桌面</button>
+        <button id="openBtn">開啟應用</button>
+        <button id="signOutBtn">登出</button>
+      </div>
+      <div id="iosTip" class="ios-tip"></div>
+      <p class="tiny">Android 請使用 Chrome，iOS 請使用 Safari。</p>
+    </div>
   </div>
   <script>
     if ('serviceWorker' in navigator) {
@@ -40,6 +58,7 @@
     }
   </script>
   <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAbEhCa6tWPIuwo_Z9n48dWUa-pj6TQx30",
