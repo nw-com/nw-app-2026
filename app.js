@@ -93,6 +93,19 @@ function bindAutoPrompt() {
   document.addEventListener("click", handler, { once: true });
   document.addEventListener("touchstart", handler, { once: true });
 }
+async function diagnostics() {
+  const link = document.querySelector('link[rel="manifest"]');
+  const manifestURL = link ? link.href : null;
+  const sw = await navigator.serviceWorker?.getRegistration();
+  const info = {
+    isAndroidChrome: isAndroidChrome(),
+    isiOS: isiOS(),
+    isStandalone: isStandalone(),
+    hasSW: !!sw,
+    manifestURL
+  };
+  console.log("[PWA Diagnostics]", info);
+}
 function setInstallUIState() {
   const ready = !!deferredInstallPrompt;
   if (installNowBtn) installNowBtn.disabled = !ready;
@@ -147,6 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     bindAutoPrompt();
     openInstallModal();
   }
+  diagnostics();
 });
 window.addEventListener("appinstalled", () => {
   if (installBar) installBar.hidden = true;
