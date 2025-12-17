@@ -11,6 +11,9 @@ const appSection = document.getElementById("appSection");
 const signOutBtn = document.getElementById("signOutBtn");
 const installBar = document.getElementById("installBar");
 const installNowBtn = document.getElementById("installNowBtn");
+function getBasePath() {
+  return location.hostname.endsWith("github.io") ? "/nw-app-2026/" : "./";
+}
 function isiOS() {
   const ua = window.navigator.userAgent;
   const platform = window.navigator.platform;
@@ -77,8 +80,17 @@ function bindAutoPrompt() {
   document.addEventListener("click", handler, { once: true });
   document.addEventListener("touchstart", handler, { once: true });
 }
+function setInstallUIState() {
+  const ready = !!deferredInstallPrompt;
+  if (installNowBtn) installNowBtn.disabled = !ready;
+  if (installBar) installBar.hidden = !(isAndroidChrome() && !isStandalone());
+  if (!ready && iosTip) {
+    iosTip.classList.add("show");
+    iosTip.textContent = "在 Chrome 點擊右上角「⋮」，選擇「安裝應用程式」。";
+  }
+}
 openBtn.addEventListener("click", () => {
-  window.location.href = "/nw-app-2026/";
+  window.location.href = getBasePath();
 });
 if (loginForm && window.firebase) {
   const auth = firebase.auth();
@@ -107,7 +119,7 @@ if (loginForm && window.firebase) {
       showIOSTip();
       if (isAndroidChrome() && !isStandalone()) {
         installBtn.hidden = false;
-        installBar.hidden = false;
+        setInstallUIState();
         bindAutoPrompt();
       }
     }
@@ -117,7 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
   showIOSTip();
   if (isAndroidChrome() && !isStandalone()) {
     installBtn.hidden = false;
-    installBar.hidden = false;
+    setInstallUIState();
     bindAutoPrompt();
   }
+});
+window.addEventListener("appinstalled", () => {
+  if (installBar) installBar.hidden = true;
+  if (installBtn) installBtn.hidden = true;
 });
