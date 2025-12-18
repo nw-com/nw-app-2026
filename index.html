@@ -35,6 +35,17 @@
     <script>
         let deferredPrompt;
         const installBtn = document.getElementById('installBtn');
+        function isiOS() {
+            const ua = navigator.userAgent.toLowerCase();
+            return /iphone|ipad|ipod/.test(ua);
+        }
+        function isAndroidChrome() {
+            const ua = navigator.userAgent.toLowerCase();
+            return ua.includes('android') && ua.includes('chrome');
+        }
+        function isStandalone() {
+            return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        }
 
         // 監聽瀏覽器的安裝事件 (Android/Chrome)
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -55,6 +66,14 @@
                 console.log(`使用者回應: ${outcome}`);
                 // 清除事件
                 deferredPrompt = null;
+            } else {
+                if (isiOS()) {
+                    alert('在 Safari 點擊分享圖示，選擇「加入主畫面」。');
+                } else if (isAndroidChrome()) {
+                    alert('在 Chrome 點擊右上角「⋮」，選擇「安裝應用程式」。');
+                } else {
+                    alert('請使用支援 PWA 的瀏覽器（如 Chrome），並確認非無痕模式。');
+                }
             }
         });
 
@@ -62,6 +81,16 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('sw.js');
         }
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!isStandalone() && (isiOS() || isAndroidChrome())) {
+                installBtn.style.display = 'block';
+            }
+            console.log('[PWA]', {
+                isiOS: isiOS(),
+                isAndroidChrome: isAndroidChrome(),
+                isStandalone: isStandalone()
+            });
+        });
     </script>
 </body>
 </html>
