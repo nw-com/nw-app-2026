@@ -1,106 +1,67 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#c62828">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="NW App 2026">
-  <link rel="apple-touch-icon" sizes="192x192" href="./icons/192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="./icons/512.png">
-  <link rel="apple-touch-icon" sizes="192x192" href="https://via.placeholder.com/192.png">
-  <link rel="apple-touch-icon" sizes="512x512" href="https://via.placeholder.com/512.png">
-  <link rel="manifest" href="manifest.webmanifest">
-  <title>NW App 2026</title>
-  <style>
-    :root { color-scheme: light dark }
-    body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif; background: #c62828; color: #fff; display: grid; min-height: 100vh; place-items: center }
-    .card { width: min(480px, 94vw); background: rgba(255,255,255,.08); backdrop-filter: blur(6px); border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,.25) }
-    .title { font-size: 24px; font-weight: 700; margin: 0 0 12px }
-    .desc { font-size: 16px; opacity: .9; margin: 0 0 20px }
-    .row { display: flex; gap: 12px; flex-wrap: wrap }
-    button { appearance: none; border: 0; border-radius: 10px; padding: 12px 16px; font-size: 16px; font-weight: 600; cursor: pointer; background: #fff; color: #c62828 }
-    button[hidden] { display: none }
-    .ios-tip { display: none; margin-top: 16px; font-size: 15px; background: rgba(255,255,255,.12); padding: 12px; border-radius: 10px }
-    .ios-tip.show { display: block }
-    .tiny { font-size: 13px; opacity: .85 }
-    input { width: 100%; padding: 12px 14px; border-radius: 10px; border: none; margin: 8px 0; font-size: 16px }
-    form .row { justify-content: flex-start }
-    .bar { position: fixed; left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; background: linear-gradient(90deg,#ff5252,#c62828); color: #fff; box-shadow: 0 -6px 20px rgba(0,0,0,.35); z-index: 50 }
-    .bar span { font-weight: 700; font-size: 15px }
-    .bar button { background: #fff; color: #c62828; padding: 12px 18px; border-radius: 12px }
-    .bar[hidden] { display: none }
-    .modal { position: fixed; inset: 0; z-index: 100 }
-    .modal[hidden] { display: none }
-    .modal .backdrop { position: absolute; inset: 0; background: rgba(0,0,0,.55) }
-    .modal .content { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(440px,92vw); background: #fff; color: #c62828; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.45); padding: 18px }
-    .modal .content h3 { margin: 0 0 8px; font-size: 20px }
-    .modal .content p { margin: 0 0 14px; color: #b71c1c }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NW App 2026</title>
+    
+    <link rel="manifest" href="manifest.json">
+    
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon" href="./icons/192.png">
+    
+    <style>
+        body { font-family: sans-serif; text-align: center; padding: 50px; }
+        #installBtn { 
+            display: none; /* 預設隱藏，只有支援安裝時才顯示 */ 
+            padding: 15px 30px; 
+            background-color: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            font-size: 18px; 
+            cursor: pointer; 
+        }
+    </style>
 </head>
 <body>
-  <div class="card">
-    <h1 class="title">雲端低成本APP系統</h1>
-    <p class="desc">使用 Firebase 與 GitHub Pages，支援 PWA 安裝至桌面捷徑。</p>
-    <div id="loginCard">
-      <h2 class="title" style="font-size:20px">登入</h2>
-      <form id="loginForm">
-        <input id="email" type="email" placeholder="電子郵件" value="nwapp.eason@gmail.com" required>
-        <input id="password" type="password" placeholder="密碼" required>
-        <div class="row">
-          <button type="submit">登入</button>
-        </div>
-        <p id="loginMsg" class="tiny"></p>
-      </form>
-    </div>
-    <div id="appSection" hidden>
-      <div class="row">
-        <button id="installBtn" hidden>安裝至桌面</button>
-        <button id="openBtn">開啟應用</button>
-        <button id="signOutBtn">登出</button>
-      </div>
-      <div id="iosTip" class="ios-tip"></div>
-      <p class="tiny">Android 請使用 Chrome，iOS 請使用 Safari。</p>
-    </div>
-    <div id="installBar" class="bar" hidden>
-      <span>安裝至桌面以獨立使用</span>
-      <button id="installNowBtn">立即安裝</button>
-    </div>
-    <div id="installModal" class="modal" hidden>
-      <div class="backdrop"></div>
-      <div class="content">
-        <h3>安裝至桌面</h3>
-        <p id="installModalMsg">為了獨立模式與最佳體驗，請安裝此應用。</p>
-        <div class="row">
-          <button id="modalInstallBtn">立即安裝</button>
-          <button id="modalCloseBtn">稍後</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-  </script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-auth-compat.js"></script>
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAbEhCa6tWPIuwo_Z9n48dWUa-pj6TQx30",
-      authDomain: "nw-app-2026.firebaseapp.com",
-      projectId: "nw-app-2026",
-      storageBucket: "nw-app-2026.firebasestorage.app",
-      messagingSenderId: "327412929502",
-      appId: "1:327412929502:web:bb55add417a3939193834f",
-      measurementId: "G-9L1LK58BR2"
-    };
-    if (firebaseConfig.apiKey) {
-      firebase.initializeApp(firebaseConfig);
-    }
-  </script>
-  <script src="app.js"></script>
+
+    <h1>歡迎使用我的 App</h1>
+    <p>點擊下方按鈕將此頁面安裝到手機桌面。</p>
+    
+    <button id="installBtn">📲 安裝 App 到桌面</button>
+
+    <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('installBtn');
+
+        // 監聽瀏覽器的安裝事件 (Android/Chrome)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // 防止瀏覽器直接跳出預設的安裝提示小條
+            e.preventDefault();
+            // 把事件存起來，稍後觸發
+            deferredPrompt = e;
+            // 顯示安裝按鈕
+            installBtn.style.display = 'block';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // 觸發安裝提示
+                deferredPrompt.prompt();
+                // 等待使用者回應
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`使用者回應: ${outcome}`);
+                // 清除事件
+                deferredPrompt = null;
+            }
+        });
+
+        // 註冊 Service Worker (PWA 必須)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
 </body>
 </html>
-
