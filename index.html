@@ -31,10 +31,22 @@
     <p>點擊下方按鈕將此頁面安裝到手機桌面。</p>
     
     <button id="installBtn">📲 安裝 App 到桌面</button>
+    
+    <div style="margin-top:24px">
+      <h2>RTSP 串流（以 VLC 開啟）</h2>
+      <input id="rtspUrl" type="text" value="rtsp://192.168.137.152/stream1" style="width:100%;max-width:520px;padding:10px;margin-top:8px">
+      <div style="margin-top:12px">
+        <button id="openVLCBtn" style="padding:12px 18px;background:#ff4136;color:#fff;border-radius:6px;border:none;cursor:pointer">用 VLC 開啟</button>
+      </div>
+      <p id="vlcMsg" style="font-size:14px;opacity:.8;margin-top:8px"></p>
+    </div>
 
     <script>
         let deferredPrompt;
         const installBtn = document.getElementById('installBtn');
+        const openVLCBtn = document.getElementById('openVLCBtn');
+        const rtspInput = document.getElementById('rtspUrl');
+        const vlcMsg = document.getElementById('vlcMsg');
         function isiOS() {
             const ua = navigator.userAgent.toLowerCase();
             return /iphone|ipad|ipod/.test(ua);
@@ -45,6 +57,19 @@
         }
         function isStandalone() {
             return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+        }
+        function openVLC() {
+            const raw = rtspInput.value.trim();
+            if (!raw) return;
+            const iosScheme = 'vlc-x-callback://x-callback-url/stream?url=' + encodeURIComponent(raw);
+            const androidScheme = 'vlc://' + encodeURIComponent(raw);
+            const desktopScheme = 'vlc://' + encodeURIComponent(raw);
+            const href = isiOS() ? iosScheme : (isAndroidChrome() ? androidScheme : desktopScheme);
+            vlcMsg.textContent = '嘗試以 VLC 開啟串流…';
+            window.location.href = href;
+            setTimeout(() => {
+                vlcMsg.textContent = '若未開啟，請確認已安裝 VLC 並允許以連結啟動。';
+            }, 1200);
         }
 
         // 監聽瀏覽器的安裝事件 (Android/Chrome)
@@ -82,6 +107,7 @@
             navigator.serviceWorker.register('sw.js');
         }
         document.addEventListener('DOMContentLoaded', () => {
+            openVLCBtn.addEventListener('click', openVLC);
             if (!isStandalone() && (isiOS() || isAndroidChrome())) {
                 installBtn.style.display = 'block';
             }
