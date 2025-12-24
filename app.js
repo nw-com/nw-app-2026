@@ -15,7 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+const db = initializeFirestore(app, { experimentalAutoDetectLongPolling: true, useFetchStreams: true });
 const storage = getStorage(app);
 setLogLevel("error");
 // Secondary app for admin account creation to avoid switching current session
