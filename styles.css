@@ -219,8 +219,8 @@ select:focus {
 }
 .stack.sys {
   display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  min-height: 100svh;
+  grid-template-rows: 8% 8% 76% 8%;
+  height: 100svh;
 }
 .row {
   width: 100%;
